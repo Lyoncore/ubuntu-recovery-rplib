@@ -47,7 +47,7 @@ type ConfigRecovery struct {
 	Recovery struct {
 		Type                  string // one of "field_transition", "factory_install"
 		FsLabel               string `yaml:"filesystem-label"`
-		TransitionFsLabel     string
+		InstallerFsLabel      string
 		BootPart              string `yaml:"boot-partition"`
 		SystembootPart        string `yaml:"systemboot-partition"`
 		WritablePart          string `yaml:"writable-partition"`

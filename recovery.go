@@ -1,6 +1,7 @@
 package rplib
 
 // RECOVERY_TYPE
+const HEADLESS_INSTALLER = "headless_installer"
 const FIELD_TRANSITION = "field_transition"
 const FACTORY_INSTALL = "factory_install"
 const FACTORY_RESTORE = "factory_restore"
