@@ -24,6 +24,7 @@ type ConfigRecovery struct {
 		Device             string
 		Channel            string
 		Size               string
+		ModelAssertion	   string `yaml:"model-assertion"`
 		OemPreinstHookDir  string `yaml:"oem-preinst-hook-dir"`
 		OemPostinstHookDir string `yaml:"oem-postinst-hook-dir"`
 		OemLogDir          string
@@ -97,6 +98,11 @@ func (config *ConfigRecovery) checkConfigs() (err error) {
 		log.Println(err)
 	}
 
+        if config.Configs.ModelAssertion == "" {
+                err = errors.New("'configs -> model-assertion' field not presented")
+                log.Println(err)
+        }
+
 	if config.Configs.Channel == "" {
 		err = errors.New("'configs -> channel' field not presented")
 		log.Println(err)
@@ -146,7 +152,7 @@ func (config *ConfigRecovery) Load(configFile string) error {
 
 func (config *ConfigRecovery) ExecuteUDF() {
 	args := []string{
-		config.Udf.Command, config.Configs.Release,
+		config.Udf.Command, config.Configs.Release, config.Configs.ModelAssertion,
 		"--channel", config.Configs.Channel,
 		"--output", config.Configs.BaseImage,
 		"--size", config.Configs.Size,
