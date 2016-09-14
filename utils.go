@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/snapcore/snapd/logger"
 )
 
 const (
@@ -71,7 +73,7 @@ func BlockSize(block string) (size int64) {
 func GetPartitionBeginEnd(device string, nr int) (begin, end int) {
 	var err error
 	line := Shellcmdoutput(fmt.Sprintf("parted -ms %s unit B print | grep \"^%d:\"", device, nr))
-	log.Println("line:", line)
+	logger.Debugf("line:", line)
 	fields := strings.Split(line, ":")
 	begin, err = strconv.Atoi(strings.TrimRight(fields[1], "B"))
 	Checkerr(err)
@@ -83,7 +85,7 @@ func GetPartitionBeginEnd(device string, nr int) (begin, end int) {
 func GetPartitionBeginEnd64(device string, nr int) (begin, end int64) {
 	var err error
 	line := Shellcmdoutput(fmt.Sprintf("parted -ms %s unit B print | grep \"^%d:\"", device, nr))
-	log.Println("line:", line)
+	logger.Debugf("line:", line)
 	fields := strings.Split(line, ":")
 	begin, err = strconv.ParseInt(strings.TrimRight(fields[1], "B"), 10, 64)
 	Checkerr(err)
@@ -94,13 +96,13 @@ func GetPartitionBeginEnd64(device string, nr int) (begin, end int64) {
 
 func GetBootEntries(keyword string) (entries []string) {
 	entryStr := Shellcmdoutput(fmt.Sprintf("efibootmgr -v | grep \"%s\" | cut -f 1 | sed 's/[^0-9]*//g'", keyword))
-	log.Printf("entryStr: [%s]\n", entryStr)
+	logger.Debugf("entryStr: [%s]\n", entryStr)
 	if "" == entryStr {
 		entries = []string{}
 	} else {
 		entries = strings.Split(entryStr, "\n")
 	}
-	log.Println("entries:", entries)
+	logger.Debugf("entries:", entries)
 	return
 }
 

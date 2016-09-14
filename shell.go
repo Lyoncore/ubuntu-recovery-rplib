@@ -1,14 +1,15 @@
 package rplib
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/snapcore/snapd/logger"
 )
 
 func Shellexec(name string, args ...string) {
-	log.Println(name + " " + strings.Join(args, " "))
+	logger.Debugf(name, args)
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -17,7 +18,7 @@ func Shellexec(name string, args ...string) {
 }
 
 func Shellexecoutput(name string, args ...string) string {
-	log.Println(name + " " + strings.Join(args, " "))
+	logger.Debugf(name, args)
 	cmd := exec.Command(name, args...)
 	out, err := cmd.Output()
 	Checkerr(err)
@@ -27,7 +28,7 @@ func Shellexecoutput(name string, args ...string) string {
 
 func Shellcmd(command string) {
 	cmd := exec.Command("sh", "-c", command)
-	log.Println(cmd.Args)
+	logger.Debugf(strings.Join(cmd.Args, " "))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
@@ -36,7 +37,7 @@ func Shellcmd(command string) {
 
 func Shellcmdoutput(command string) string {
 	cmd := exec.Command("sh", "-c", command)
-	log.Println(cmd.Args)
+	logger.Debugf(strings.Join(cmd.Args, " "))
 	out, err := cmd.Output()
 	Checkerr(err)
 

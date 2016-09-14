@@ -3,7 +3,8 @@ package rplib
 import (
 	"errors"
 	"io/ioutil"
-	"log"
+
+	"github.com/snapcore/snapd/logger"
 
 	"gopkg.in/yaml.v2"
 )
@@ -61,102 +62,102 @@ type ConfigRecovery struct {
 }
 
 func (config *ConfigRecovery) checkConfigs() (err error) {
-	log.Println("check configs ... ")
+	logger.Debugf("check configs ... ")
 
 	if config.Project == "" {
 		err = errors.New("'project' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Snaps.Kernel == "" {
 		err = errors.New("'snaps -> kernel' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Snaps.Os == "" {
 		err = errors.New("'snaps -> os' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Snaps.Gadget == "" {
 		err = errors.New("'snaps -> gadget' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.Arch == "" {
 		err = errors.New("'configs -> arch' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	} else if config.Configs.Arch != "amd64" && config.Configs.Arch != "arm" && config.Configs.Arch != "arm64" {
 		err = errors.New("'recovery -> Arch' only accept \"amd64\" or \"arm\" or \"arm64\"")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.BaseImage == "" {
 		err = errors.New("'configs -> baseimage' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.RecoveryType == "" {
 		err = errors.New("'configs -> recoverytype' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.RecoverySize == "" {
 		err = errors.New("'configs -> recoverysize' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.Release == "" {
 		err = errors.New("'configs -> release' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.Channel == "" {
 		err = errors.New("'configs -> channel' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.Size == "" {
 		err = errors.New("'configs -> size' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.PartitionType == "" {
 		err = errors.New("'recovery -> PartitionType' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	} else if config.Configs.PartitionType != "gpt" && config.Configs.PartitionType != "mbr" {
 		err = errors.New("'recovery -> PartitionType' only accept \"gpt\" or \"mbr\"")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Configs.Bootloader == "" {
 		err = errors.New("'recovery -> PartitionType' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	} else if config.Configs.Bootloader != "grub" && config.Configs.Bootloader != "u-boot" {
 		err = errors.New("'recovery -> PartitionType' only accept \"grub\" or \"u-boot\"")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Udf.Binary == "" {
 		err = errors.New("'udf -> binary' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Udf.Command == "" {
 		err = errors.New("'udf -> command' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	if config.Recovery.FsLabel == "" {
 		err = errors.New("'recovery -> filesystem-label' field not presented")
-		log.Println(err)
+		logger.Noticef(err.Error())
 	}
 
 	return err
 }
 
 func (config *ConfigRecovery) Load(configFile string) error {
-	log.Println("Loading config file %s ...", configFile)
+	logger.Debugf("Loading config file %s ...", configFile)
 	yamlFile, err := ioutil.ReadFile(configFile)
 
 	if err != nil {
