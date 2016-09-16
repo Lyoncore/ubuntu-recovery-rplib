@@ -1,9 +1,12 @@
 package rplib
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -119,4 +122,129 @@ func ReadKernelCmdline() string {
 
 func IsKernelCmdlineContains(substr string) bool {
 	return strings.Contains(ReadKernelCmdline(), substr)
+}
+
+// SymlinkCopy() copies symlink to distination.
+// If dst is a directory, it makes a copy to and keep same name.
+// If dst is a new name, it makes a rename copy.
+func SymlinkCopy(src, dst string) (err error) {
+	var dst_name string
+	//Check src exist and is a symlink
+	srcStat, err := os.Lstat(src)
+	if err != nil {
+		return err
+	}
+	if srcStat.Mode()&os.ModeSymlink != os.ModeSymlink {
+		err = errors.New("Source is not symlink")
+		return err
+	}
+	//Check dst not exist for copy
+	dstStat, err := os.Stat(dst)
+	if err == nil && dstStat.IsDir() == true {
+		dst_name = fmt.Sprintf("%s/%s", dst, filepath.Base(src))
+	} else {
+		dst_name = dst //it's destination with file name
+	}
+
+	link_src, err := os.Readlink(src)
+	if err != nil {
+		return err
+	}
+	return os.Symlink(link_src, dst_name)
+}
+
+// FileCopy() copies source file to distination.
+// If dst is a directory, it makes a copy to and keep same name.
+// If dst is a new name, it makes a rename copy.
+func FileCopy(src, dst string) (err error) {
+	var dst_name string
+	//Check src exist for copy, and cannot be a dir
+	srcStat, err := os.Stat(src)
+	if err != nil && srcStat.IsDir() == true {
+		return err
+	}
+
+	//Check dst not exist for copy
+	dstStat, err := os.Stat(dst)
+	if err == nil && dstStat.IsDir() == true {
+		dst_name = fmt.Sprintf("%s/%s", dst, filepath.Base(src))
+	} else {
+		dst_name = dst //it's destination with file name
+	}
+
+	srcf, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcf.Close()
+	dstf, err := os.Create(dst_name)
+	if err != nil {
+		return err
+	}
+	defer dstf.Close()
+
+	_, err = io.Copy(dstf, srcf)
+	if err == nil {
+		err = os.Chmod(dst_name, srcStat.Mode())
+	}
+	return
+}
+
+type copyinfo struct {
+	dst      string
+	basepath string
+}
+
+//walkCopy() is for walk() in CopyTree()
+func walkCopy(ci copyinfo) filepath.WalkFunc {
+	return func(src string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+
+		srcf, err := filepath.Rel(ci.basepath, src)
+		dst := fmt.Sprintf("%s/%s", ci.dst, srcf)
+		if info.IsDir() {
+			if srcf == "." {
+				return nil
+			}
+			err = os.MkdirAll(fmt.Sprintf("%s/%s", ci.dst, srcf), info.Mode())
+			if err != nil {
+				return nil
+			}
+		} else if info.Mode()&os.ModeSymlink == os.ModeSymlink { //It's symlink
+			return SymlinkCopy(src, dst)
+		} else { //It's file
+			return FileCopy(src, dst)
+		}
+
+		return nil
+	}
+}
+
+// CopyTree() copy the source directory recursivly to distination.
+// The src and dst must be a path to directory.
+// If dst directory not exist, it will create a new to copy to.
+func CopyTree(src, dst string) (err error) {
+	//Check src exist and must be a directory
+	srcStat, err := os.Stat(src)
+	if err != nil || srcStat.IsDir() == false {
+		err = errors.New("Source must be a directory")
+		return err
+	}
+
+	//Check dst exist must be a dir
+	dstStat, err := os.Stat(dst)
+	if err == nil && dstStat.IsDir() == false {
+		err = errors.New("Distination must be a directory")
+		return err
+	} else { //make a new dir to copy
+		err = os.MkdirAll(dst, srcStat.Mode())
+		if err != nil {
+			return err
+		}
+	}
+
+	ci := copyinfo{dst, src}
+	return filepath.Walk(src, walkCopy(ci))
 }
