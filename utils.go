@@ -160,7 +160,7 @@ func FileCopy(src, dst string) (err error) {
 	var dst_name string
 	//Check src exist for copy, and cannot be a dir
 	srcStat, err := os.Stat(src)
-	if err != nil && srcStat.IsDir() == true {
+	if err != nil || srcStat.IsDir() == true {
 		return err
 	}
 
