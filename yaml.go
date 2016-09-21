@@ -87,8 +87,8 @@ func (config *ConfigRecovery) checkConfigs() (err error) {
 	if config.Configs.Arch == "" {
 		err = errors.New("'configs -> arch' field not presented")
 		logger.Noticef(err.Error())
-	} else if config.Configs.Arch != "amd64" && config.Configs.Arch != "arm" && config.Configs.Arch != "arm64" {
-		err = errors.New("'recovery -> Arch' only accept \"amd64\" or \"arm\" or \"arm64\"")
+	} else if config.Configs.Arch != "amd64" && config.Configs.Arch != "arm" && config.Configs.Arch != "arm64" && config.Configs.Arch != "armhf" {
+		err = errors.New("'recovery -> Arch' only accept \"amd64\" or \"arm\" or \"arm64\" or \"amdhf\"")
 		logger.Noticef(err.Error())
 	}
 
