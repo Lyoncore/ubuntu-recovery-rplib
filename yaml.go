@@ -45,7 +45,8 @@ type ConfigRecovery struct {
 		Xz      bool
 	}
 	Recovery struct {
-		Type                  string // one of "field_transition", "factory_install"
+		Type                  string // one of "factory_install", "factory,restore"
+		ImageType             string // one of "raw", "headless_installer"
 		FsLabel               string `yaml:"filesystem-label"`
 		InstallerFsLabel      string
 		BootPart              string `yaml:"boot-partition"`
