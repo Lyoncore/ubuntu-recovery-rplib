@@ -18,22 +18,23 @@ type ConfigRecovery struct {
 	}
 	Configs struct {
 		// TODO: deprecate Store parameter
-		Arch               string
-		BaseImage          string
-		RecoveryType       string
-		RecoverySize       string
-		Release            string
-		Store              string
-		Device             string // parameter for ubuntu-device-flash
-		Channel            string
-		Size               string
-		OemPreinstHookDir  string `yaml:"oem-preinst-hook-dir"`
-		OemPostinstHookDir string `yaml:"oem-postinst-hook-dir"`
-		OemLogDir          string
-		Packages           []string
-		PartitionType      string `yaml:"partition-type"`
-		Bootloader         string `yaml:"bootloader"`
-		ModelAssertion     string
+		Arch                string
+		BaseImage           string
+		RecoveryType        string
+		RecoverySize        string
+		Release             string
+		Store               string
+		Device              string // parameter for ubuntu-device-flash
+		Channel             string
+		Size                string
+		OemPreinstHookDir   string `yaml:"oem-preinst-hook-dir"`
+		OemPostinstHookDir  string `yaml:"oem-postinst-hook-dir"`
+		OemPreRebootHookDir string `yaml:"oem-prereboot-hook-dir"`
+		OemLogDir           string
+		Packages            []string
+		PartitionType       string `yaml:"partition-type"`
+		Bootloader          string `yaml:"bootloader"`
+		ModelAssertion      string
 	}
 	Udf struct {
 		Binary  string
