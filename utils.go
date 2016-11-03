@@ -93,7 +93,7 @@ func GetPartitionBeginEnd64(device string, nr int) (begin, end int64) {
 }
 
 func GetBootEntries(keyword string) (entries []string) {
-	entryStr := Shellcmdoutput(fmt.Sprintf("efibootmgr -v | grep \"%s\" | cut -f 1 | sed 's/[^0-9]*//g'", keyword))
+	entryStr := Shellcmdoutput(fmt.Sprintf("efibootmgr -v | grep \"%s\" | cut -f 1 | sed 's/Boot//g' | sed 's/[^0-9A-Fa-f]*//g'", keyword))
 	log.Printf("entryStr: [%s]\n", entryStr)
 	if "" == entryStr {
 		entries = []string{}
