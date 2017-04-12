@@ -125,12 +125,11 @@ func CheckIfFileExistAndSize(input string, size int64) (bool, error) {
 	fileInfo, err := os.Stat(input)
 	if os.IsNotExist(err) {
 		return false, err
-	} else if fileInfo.Size() != size && err == nil {
+	} else if fileInfo.Size() != size {
 		return false, errors.New("Size not matched")
-	} else if fileInfo.Size() != size && err != nil {
+	} else if err != nil {
 		return false, err
 	} else {
-		return true, err
+		return true, nil
 	}
-	return false, err
 }
