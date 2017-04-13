@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"os"
+	"errors"
 )
 
 const (
@@ -117,4 +119,17 @@ func ReadKernelCmdline() string {
 
 func IsKernelCmdlineContains(substr string) bool {
 	return strings.Contains(ReadKernelCmdline(), substr)
+}
+
+func CheckIfFileExistAndSize(input string, size int64) (bool, error) {
+	fileInfo, err := os.Stat(input)
+	if os.IsNotExist(err) {
+		return false, err
+	} else if fileInfo.Size() != size {
+		return false, errors.New("Size not matched")
+	} else if err != nil {
+		return false, err
+	} else {
+		return true, nil
+	}
 }
