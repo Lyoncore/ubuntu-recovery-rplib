@@ -34,7 +34,12 @@ func FindDevice(blockDevice string) (device string, err error) {
 
 	dat, err := ioutil.ReadFile(fmt.Sprintf("%s/dev", syspath))
 	if err != nil {
-		return "", err
+		//For the CDROM case
+		syspath := Realpath(filepath.Join("/sys/class/block", path.Base(blockDevice)))
+		dat, err = ioutil.ReadFile(fmt.Sprintf("%s/dev", syspath))
+		if err != nil {
+			return "", err
+		}
 	}
 	dat_str := strings.TrimSpace(string(dat))
 	device = Realpath(fmt.Sprintf("/dev/block/%s", dat_str))
